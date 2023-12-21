@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 const App = () => {
   return (
-    <h2>Welcome to the boilerplate</h2>
+    <h2>SQL Shipping Company</h2>
   );
 }
 
