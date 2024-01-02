@@ -11,3 +11,12 @@ exports.getShipmentsByCustomerId = async (req, res) => {
   }
 };
 
+exports.getTotalShipments = async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT COUNT(*) AS totalShipments FROM shipment');
+    res.json(rows[0].totalShipments);
+  } catch (error) {
+    console.error('Error fetching total number of shipments:', error);
+    res.status(500).send('Server error');
+  }
+};
