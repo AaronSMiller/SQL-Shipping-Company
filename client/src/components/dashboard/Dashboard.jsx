@@ -9,25 +9,24 @@ export default function Dashboard() {
   useEffect(() => {
     // Fetch total number of shipments
     axios.get('/api/shipments/total')
-      .then(response => setTotalShipments(response.data))
+      .then(response => setTotalShipments(Number(response.data)))
       .catch(error => console.error('Failed to fetch total shipments', error));
 
     // Fetch total revenue
     axios.get('/api/revenue/total')
-      .then(response => setTotalRevenue(response.data))
+      .then(response => setTotalRevenue(Number(response.data.totalRevenue)))
       .catch(error => console.error('Failed to fetch total revenue', error));
 
-    // Fetch best customer
-    axios.get('/api/customers/best')
-      .then(response => setBestCustomer(response.data))
-      .catch(error => console.error('Failed to fetch best customer', error));
+    // // Fetch best customer
+    // axios.get('/api/customers/best')
+    //   .then(response => setBestCustomer(response.data))
+    //   .catch(error => console.error('Failed to fetch best customer', error));
 
 
   }, []);
 
   return (
     <div>
-      <h1>Dashboard</h1>
       <p>Total Number of Shipments: {totalShipments}</p>
       <p>Total Revenue: {totalRevenue}</p>
       <p>Best Customer: {bestCustomer}</p>
