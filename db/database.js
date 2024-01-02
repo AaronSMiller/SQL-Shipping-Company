@@ -1,12 +1,18 @@
+// db.js
 const mysql = require('mysql2');
-require('dotenv').config();
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME
+// Create a connection pool.
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'SQL_Shipping_Company',
+  password: '',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
+// For Promises API
+const promisePool = pool.promise();
 
-module.exports = connection;
+module.exports = promisePool;
