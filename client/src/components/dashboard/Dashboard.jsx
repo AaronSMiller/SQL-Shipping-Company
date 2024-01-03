@@ -40,12 +40,24 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>Total Number of Shipments: {totalShipments}</p>
-      <p>Total Revenue: ${totalRevenue}</p>
-      <p>Customer with Highest Revenue: {highestRevenueCustomer}</p>
-      <p>Customer with Most Shipments: {mostShipmentsCustomer.cust_name || 'Loading...'}</p>
+    <div className="dashboard-container">
+      <h1 className="dashboard-header">Dashboard</h1>
+      <div className="dashboard-stat">
+        <h3>Total Number of Shipments</h3>
+        <p>{totalShipments}</p>
+      </div>
+      <div className="dashboard-stat">
+        <h3>Total Revenue</h3>
+        <p>${totalRevenue}</p>
+      </div>
+      <div className="dashboard-stat">
+        <h3>Customer with Highest Revenue</h3>
+        <p>{highestRevenueCustomer}</p>
+      </div>
+      <div className="dashboard-stat">
+        <h3>Customer with Most Shipments</h3>
+        <p>{mostShipmentsCustomer.cust_name || 'Loading...'}</p>
+      </div>
     </div>
   );
 }

@@ -15,11 +15,11 @@ const CustomersList = () => {
 
   return (
     <div>
-      <div className="customer-list">
-        {customers.map(customer => (
-          <CustomerCard key={customer.cust_id} customer={customer} />
-        ))}
-      </div>
+    <div className="customer-list">
+      {customers.map(customer => (
+        <CustomerCard key={customer.cust_id} customer={customer} />
+      ))}
+    </div>
     </div>
   );
 };
