@@ -13,7 +13,7 @@ router.get('/customers/most-shipments', customersController.getCustomerWithMostS
 router.get('/customers/:cust_id', customersController.getCustomerById);
 router.get('/customers/:customerId/shipments', customersController.getCustomerShipmentDetails);
 router.get('/customers/:customerId/trucks', customersController.getTrucksForCustomer);
-
+router.get('/customers/:customerId/drivers', customersController.getDriversForCustomer);
 
 
 //Shipment Routes
