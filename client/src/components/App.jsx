@@ -2,6 +2,7 @@ import React from 'react';
 import CustomersList from './customer/CustomerList';
 import Dashboard from './dashboard/Dashboard'
 import ShowSchema from './showSchema/ShowSchema'
+import CreateCustomer from './createCustomer/CreateCustomer'
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <ShowSchema />
       <h2>KPIs</h2>
       <Dashboard />
+      <CreateCustomer />
       <CustomersList />
     </div>
   );

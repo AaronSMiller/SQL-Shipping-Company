@@ -105,11 +105,11 @@ exports.getCustomerShipmentDetails = async (req, res) => {
     const responseData = {
       totalShipments: shipmentStats[0].totalShipments,
       averageWeight: shipmentStats[0].averageWeight,
-     deliveryLocations: deliveryLocations.map(loc => {
-      const city = loc.city_name;
-      const state = loc.state;
-      return `${city}, ${state}`;
-    }),
+      deliveryLocations: deliveryLocations.map(loc => {
+        const city = loc.city_name;
+        const state = loc.state;
+        return `${city}, ${state}`;
+      }),
     };
 
     res.json(responseData);
@@ -192,6 +192,52 @@ exports.getDriversForCustomer = async (req, res) => {
   }
 };
 
+exports.createCustomer = async (req, res) => {
+  try {
+    const { cust_name, cust_type, address, city, state, zip, phone, annual_revenue } = req.body;
+
+    // Check for an existing customer with the same name to prevent duplicates
+    const duplicateNameCheckSql = 'SELECT cust_id FROM customer WHERE cust_name = ? LIMIT 1';
+    const [existingCustomer] = await db.query(duplicateNameCheckSql, [cust_name]);
+
+    if (existingCustomer.length > 0) {
+      return res.status(409).json({ message: 'A customer with this name already exists.' });
+    }
+
+    // If no duplicate name, proceed to insert the new customer
+    const insertSql = `
+      INSERT INTO customer (cust_name, cust_type, address, city, state, zip, phone, annual_revenue)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    `;
+
+    const results = await db.query(insertSql, [cust_name, cust_type, address, city, state, zip, phone, annual_revenue || 0]);
+
+    // Send back the ID of the newly created customer
+    res.status(201).json({ cust_id: results.insertId });
+  } catch (error) {
+    // Handle errors
+    console.error(error);
+    res.status(500).json({ message: 'Error creating new customer' });
+  }
+};
+
+exports.deleteCustomer = async (req, res) => {
+  const { cust_id } = req.params;
+
+  try {
+    const [result] = await db.query('DELETE FROM customer WHERE cust_id = ?', [cust_id]);
+
+    if (result.affectedRows === 0) {
+      console.log('No customer found with cust_id:', cust_id);
+      return res.status(404).json({ message: 'Customer not found.' });
+    }
+
+    return res.status(200).json({ message: 'Customer deleted successfully.' });
+  } catch (error) {
+    console.error('Error in delete operation:', error);
+    return res.status(500).json({ message: 'Failed to delete customer.', error: error.message });
+  }
+};
 
 
 
