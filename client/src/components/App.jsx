@@ -10,7 +10,6 @@ const App = () => {
       <ShowSchema />
       <h2>KPIs</h2>
       <Dashboard />
-      <h2>Customers</h2>
       <CustomersList />
     </div>
   );

@@ -126,21 +126,21 @@ exports.getTrucksForCustomer = async (req, res) => {
     // SQL query to get all unique trucks for a specific customer's shipments
     const query = `
     SELECT
-    t.truck_id,
-    t.make,
-    t.model_year,
+      t.truck_id,
+      t.make,
+      t.model_year,
     COUNT(s.ship_id) AS shipment_count
-  FROM
-    truck AS t
-  INNER JOIN
-    shipment AS s ON t.truck_id = s.truck_id
-  WHERE
-    s.cust_id = ?
-  GROUP BY
-    t.truck_id
-  ORDER BY
-    shipment_count DESC
-  LIMIT 1;
+    FROM
+      truck AS t
+    INNER JOIN
+      shipment AS s ON t.truck_id = s.truck_id
+    WHERE
+      s.cust_id = ?
+    GROUP BY
+      t.truck_id
+    ORDER BY
+      shipment_count DESC
+    LIMIT 1;
     `;
 
     const [trucks] = await db.query(query, [customerId]);
@@ -155,6 +155,42 @@ exports.getTrucksForCustomer = async (req, res) => {
   }
 };
 
+exports.getDriversForCustomer = async (req, res) => {
+  const { customerId } = req.params;
+
+  try {
+    // SQL query to get the driver with the most shipments for the specified customer
+    const query = `
+      SELECT
+        d.driver_id,
+        d.first_name,
+        d.last_name,
+        COUNT(s.ship_id) AS shipment_count
+      FROM
+        driver AS d
+      INNER JOIN
+        shipment AS s ON d.driver_id = s.driver_id
+      WHERE
+        s.cust_id = ?
+      GROUP BY
+        d.driver_id
+      ORDER BY
+        shipment_count DESC
+      LIMIT 1;
+    `;
+
+    const [drivers] = await db.query(query, [customerId]);
+
+    if (drivers.length > 0) {
+      res.json(drivers[0]);  // Send back the driver with the most shipments
+    } else {
+      res.status(404).json({ message: 'No drivers found for this customer' });
+    }
+  } catch (error) {
+    console.error('Error fetching the most used driver for customer:', error);
+    res.status(500).send('Server error');
+  }
+};
 
 
 

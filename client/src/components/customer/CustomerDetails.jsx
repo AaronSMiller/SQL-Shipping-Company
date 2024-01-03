@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CustomerDetails = ({ customerId, customerName}) => {
+const CustomerDetails = ({ customerId, customerName }) => {
   const [customerDetails, setCustomerDetails] = useState({
     totalShipments: 0,
     averageShipmentWeight: 0,
     deliveryLocations: [],
     mostUsedTruckType: [],
-    mainDriver: ''
+    mainDriver: {}
   });
 
   useEffect(() => {
@@ -16,7 +16,8 @@ const CustomerDetails = ({ customerId, customerName}) => {
         try {
           const shipmentResponse = await axios.get(`/api/customers/${customerId}/shipments`);
           const truckResponse = await axios.get(`/api/customers/${customerId}/trucks`);
-          // const driverResponse = await axios.get(`/api/customers/${customerId}/drivers`);
+          const driverResponse = await axios.get(`/api/customers/${customerId}/drivers`);
+
 
           setCustomerDetails(prevDetails => ({
             ...prevDetails,
@@ -24,7 +25,7 @@ const CustomerDetails = ({ customerId, customerName}) => {
             averageShipmentWeight: shipmentResponse.data.averageWeight,
             deliveryLocations: shipmentResponse.data.deliveryLocations,
             mostUsedTruckType: truckResponse.data,
-            // mainDriver: driverResponse.data.mainDriver
+            mainDriver: driverResponse.data
           }));
         } catch (error) {
           console.error('Error fetching customer details:', error);
@@ -35,10 +36,14 @@ const CustomerDetails = ({ customerId, customerName}) => {
     }
   }, [customerId]);
 
-  // Destructure the most used truck type from state
   const mostUsedTruck = customerDetails.mostUsedTruckType.length > 0
     ? customerDetails.mostUsedTruckType[0]
     : null;
+
+  // Format the main driver's full name
+  const mainDriverFullName = customerDetails.mainDriver
+    ? `${customerDetails.mainDriver.first_name} ${customerDetails.mainDriver.last_name}`
+    : 'N/A';
 
   return (
     <div>
@@ -56,7 +61,7 @@ const CustomerDetails = ({ customerId, customerName}) => {
       {mostUsedTruck && (
         <p>Most Used Truck Type: {mostUsedTruck.make} {mostUsedTruck.model_year} (Used {mostUsedTruck.shipment_count} times)</p>
       )}
-      {/* <p>Main Driver: {customerDetails.mainDriver}</p> */}
+      <p>Main Driver: {mainDriverFullName} (Total Shipments: {customerDetails.mainDriver.shipment_count})</p>
     </div>
   );
 }
