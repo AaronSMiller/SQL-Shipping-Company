@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import customerHelpers from '../../helpers/customerHelpers'
 import DynamicTable from '../Table/DynamicTable'
 import Modal from '../modal/Modal';
+import CustomerDetails from './CustomerDetails';
 
 const CustomerCard = ({ customer }) => {
 
   const [shipments, setShipments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+  const handleOpenDetails = () => {
+    setIsDetailsModalOpen(true);
+  };
 
   const handleGetShipments = () => {
     customerHelpers.getShipmentsByCustomerId(customer.cust_id)
@@ -30,16 +37,12 @@ const CustomerCard = ({ customer }) => {
       <p>State: {customer.state}</p>
       <p>ZIP: {customer.zip}</p>
       <p>Phone: {customer.phone}</p>
-      <button onClick={handleGetShipments}>Get Shipments</button>
-      <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        {shipments.length > 0 ? (
-          <>
-            <h3>{customer.cust_name} Shipments</h3>
-            <DynamicTable data={shipments} />
-          </>
-        ) : (
-          <p>No shipments data available.</p>
-        )}
+      {/* <button onClick={handleGetShipments}>Get Shipments</button> */}
+      <button onClick={handleOpenDetails}>View Details</button>
+
+      {/* Modal for Customer Details */}
+      <Modal show={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)}>
+        <CustomerDetails customerId={customer.cust_id} customerName={customer.cust_name} />
       </Modal>
     </div>
   );
