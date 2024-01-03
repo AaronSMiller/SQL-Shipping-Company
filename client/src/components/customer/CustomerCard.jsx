@@ -3,6 +3,7 @@ import customerHelpers from '../../helpers/customerHelpers'
 import DynamicTable from '../Table/DynamicTable'
 import Modal from '../modal/Modal';
 import CustomerDetails from './CustomerDetails';
+import axios from 'axios'
 
 const CustomerCard = ({ customer }) => {
 
@@ -26,6 +27,28 @@ const CustomerCard = ({ customer }) => {
       });
   };
 
+  const handleDeleteCustomer = () => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete ${customer.cust_name}?`);
+    if (confirmDelete) {
+      axios.delete(`/api/customers/${customer.cust_id}`)
+        .then(response => {
+          // Check for a successful response status code (e.g., 200 OK)
+          if (response.status === 200) {
+            alert(response.data.message); // Show the success message from the server
+          } else {
+            // If the status code is not successful, log the response for debugging
+            console.error('Unexpected response status:', response);
+            alert('Customer deletion was not successful. Please check the console for more information.');
+          }
+        })
+        .catch(error => {
+          console.error('There was an error deleting the customer!', error);
+          // Check if a response was received and show the message
+          alert(error.response?.data?.message || 'Failed to delete customer. Please try again.');
+        });
+    }
+  };
+
 
   return (
     <div className="customer-card">
@@ -39,7 +62,7 @@ const CustomerCard = ({ customer }) => {
       <p>Phone: {customer.phone}</p>
       {/* <button onClick={handleGetShipments}>Get Shipments</button> */}
       <button onClick={handleOpenDetails}>View Details</button>
-
+      <button onClick={handleDeleteCustomer} className="delete-button">Delete Customer</button>
       {/* Modal for Customer Details */}
       <Modal show={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)}>
         <CustomerDetails customerId={customer.cust_id} customerName={customer.cust_name} />
