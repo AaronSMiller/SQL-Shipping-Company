@@ -16,16 +16,7 @@ const CustomerCard = ({ customer }) => {
     setIsDetailsModalOpen(true);
   };
 
-  const handleGetShipments = () => {
-    customerHelpers.getShipmentsByCustomerId(customer.cust_id)
-      .then(response => {
-        setShipments(response.data)
-        setIsModalOpen(true)
-      })
-      .catch(error => {
-        console.error('There was an error fetching the shipments!', error);
-      });
-  };
+
 
   const handleDeleteCustomer = () => {
     const confirmDelete = window.confirm(`Are you sure you want to delete ${customer.cust_name}?`);
@@ -60,10 +51,8 @@ const CustomerCard = ({ customer }) => {
       <p>State: {customer.state}</p>
       <p>ZIP: {customer.zip}</p>
       <p>Phone: {customer.phone}</p>
-      {/* <button onClick={handleGetShipments}>Get Shipments</button> */}
-      <button onClick={handleOpenDetails}>View Details</button>
+      <button onClick={handleOpenDetails} className="details-button">View Details</button>
       <button onClick={handleDeleteCustomer} className="delete-button">Delete Customer</button>
-      {/* Modal for Customer Details */}
       <Modal show={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)}>
         <CustomerDetails customerId={customer.cust_id} customerName={customer.cust_name} />
       </Modal>
