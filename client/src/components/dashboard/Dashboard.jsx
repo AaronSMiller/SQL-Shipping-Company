@@ -11,7 +11,6 @@ export default function Dashboard() {
     // Fetch total number of shipments
     axios.get('/api/shipments/total')
     .then(response => {
-      console.log("Frontend Response Data:", response.data);
       setTotalShipments(response.data.totalShipments);
     })
 
