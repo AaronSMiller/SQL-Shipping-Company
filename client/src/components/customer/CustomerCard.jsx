@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import customerHelpers from '../../helpers/customerHelpers'
 import DynamicTable from '../Table/DynamicTable'
 import Modal from '../modal/Modal';
 import CustomerDetails from './CustomerDetails';
@@ -16,16 +15,15 @@ const CustomerCard = ({ customer }) => {
     setIsDetailsModalOpen(true);
   };
 
-  const handleGetShipments = () => {
-    customerHelpers.getShipmentsByCustomerId(customer.cust_id)
-      .then(response => {
-        setShipments(response.data)
-        setIsModalOpen(true)
-      })
-      .catch(error => {
-        console.error('There was an error fetching the shipments!', error);
-      });
+  const formatRevenue = (revenue) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2
+    }).format(revenue);
   };
+
+
 
   const handleDeleteCustomer = () => {
     const confirmDelete = window.confirm(`Are you sure you want to delete ${customer.cust_name}?`);
@@ -54,16 +52,14 @@ const CustomerCard = ({ customer }) => {
     <div className="customer-card">
       <h3>{customer.cust_name}</h3>
       <p>Type: {customer.cust_type}</p>
-      <p>Annual Revenue: ${customer.annual_revenue}</p>
+      <p>Annual Revenue: {formatRevenue(customer.annual_revenue)}</p>
       <p>Address: {customer.address}</p>
       <p>City: {customer.city}</p>
       <p>State: {customer.state}</p>
       <p>ZIP: {customer.zip}</p>
       <p>Phone: {customer.phone}</p>
-      {/* <button onClick={handleGetShipments}>Get Shipments</button> */}
-      <button onClick={handleOpenDetails}>View Details</button>
+      <button onClick={handleOpenDetails} className="details-button">View Details</button>
       <button onClick={handleDeleteCustomer} className="delete-button">Delete Customer</button>
-      {/* Modal for Customer Details */}
       <Modal show={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)}>
         <CustomerDetails customerId={customer.cust_id} customerName={customer.cust_name} />
       </Modal>

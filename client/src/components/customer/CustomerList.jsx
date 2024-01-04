@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import customerHelpers from '../../helpers/customerHelpers';
 import CustomerCard from './CustomerCard'
+import axios from 'axios'
 
 const CustomersList = () => {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    customerHelpers.getAllCustomers().then(response => {
+    axios.get(`/api/customers/`)
+    // customerHelpers.getAllCustomers()
+    .then(response => {
       setCustomers(response.data);
     }).catch(error => {
       console.error('There was an error!', error);

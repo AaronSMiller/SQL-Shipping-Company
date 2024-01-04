@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import DynamicTable from '../Table/DynamicTable'
 
 const CustomerDetails = ({ customerId, customerName }) => {
   const [customerDetails, setCustomerDetails] = useState({
@@ -7,8 +8,11 @@ const CustomerDetails = ({ customerId, customerName }) => {
     averageShipmentWeight: 0,
     deliveryLocations: [],
     mostUsedTruckType: [],
-    mainDriver: {}
+    mainDriver: {},
+    shipments: []
   });
+
+
 
   useEffect(() => {
     if (customerId) {
@@ -17,6 +21,7 @@ const CustomerDetails = ({ customerId, customerName }) => {
           const shipmentResponse = await axios.get(`/api/customers/${customerId}/shipments`);
           const truckResponse = await axios.get(`/api/customers/${customerId}/trucks`);
           const driverResponse = await axios.get(`/api/customers/${customerId}/drivers`);
+          const shipmentListResponse = await axios.get(`/api/shipments/customer/${customerId}`)
 
 
           setCustomerDetails(prevDetails => ({
@@ -25,7 +30,8 @@ const CustomerDetails = ({ customerId, customerName }) => {
             averageShipmentWeight: shipmentResponse.data.averageWeight,
             deliveryLocations: shipmentResponse.data.deliveryLocations,
             mostUsedTruckType: truckResponse.data,
-            mainDriver: driverResponse.data
+            mainDriver: driverResponse.data,
+            shipments: shipmentListResponse.data
           }));
         } catch (error) {
           console.error('Error fetching customer details:', error);
@@ -62,6 +68,7 @@ const CustomerDetails = ({ customerId, customerName }) => {
         <p>Most Used Truck Type: {mostUsedTruck.make} {mostUsedTruck.model_year} (Used {mostUsedTruck.shipment_count} times)</p>
       )}
       <p>Main Driver: {mainDriverFullName} (Total Shipments: {customerDetails.mainDriver.shipment_count})</p>
+      <DynamicTable data={customerDetails.shipments}/>
     </div>
   );
 }
