@@ -1,4 +1,4 @@
-const db = require('../../db/database'); // Adjust the path as per your project structure
+const db = require('../../db/database');
 
 const getShipmentsByCustomerId = async (cust_id) => {
   try {
