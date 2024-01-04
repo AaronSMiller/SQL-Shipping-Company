@@ -44,7 +44,7 @@ export default function CreateCustomer() {
   };
 
   return (
-    <div className="create-customer-container">
+    <div className="container create-customer-container">
       <h2>Create Customer</h2>
       <form onSubmit={handleSubmit}>
         <label>

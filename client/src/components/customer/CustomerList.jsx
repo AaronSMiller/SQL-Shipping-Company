@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import customerHelpers from '../../helpers/customerHelpers';
 import CustomerCard from './CustomerCard'
 import axios from 'axios'
 

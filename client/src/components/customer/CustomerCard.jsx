@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import customerHelpers from '../../helpers/customerHelpers'
 import DynamicTable from '../Table/DynamicTable'
 import Modal from '../modal/Modal';
 import CustomerDetails from './CustomerDetails';
@@ -14,6 +13,14 @@ const CustomerCard = ({ customer }) => {
 
   const handleOpenDetails = () => {
     setIsDetailsModalOpen(true);
+  };
+
+  const formatRevenue = (revenue) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2
+    }).format(revenue);
   };
 
 
@@ -45,7 +52,7 @@ const CustomerCard = ({ customer }) => {
     <div className="customer-card">
       <h3>{customer.cust_name}</h3>
       <p>Type: {customer.cust_type}</p>
-      <p>Annual Revenue: ${customer.annual_revenue}</p>
+      <p>Annual Revenue: {formatRevenue(customer.annual_revenue)}</p>
       <p>Address: {customer.address}</p>
       <p>City: {customer.city}</p>
       <p>State: {customer.state}</p>

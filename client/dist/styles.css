@@ -137,34 +137,36 @@ h1, h2, h3 {
 
 /* Customer Form */
 .create-customer-container {
-  max-width: 600px;
+  width: 90%; /* Align with other components */
+  max-width: 1200px; /* Align with other components */
   margin: 2rem auto;
-  padding: 1rem; /* Reduced vertical padding */
+  padding: 1rem;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.create-customer-container h2 {
-  text-align: center;
-  margin-bottom: 1rem; /* Reduced bottom margin */
-  color: #333;
+/* Adjust the form elements within the container */
+.create-customer-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
 .create-customer-container form {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem; /* Reduced gap between form elements */
+  gap: 0.8rem;
 }
 
 .create-customer-container form label {
   font-weight: 600;
   color: #333;
-  margin-bottom: 0.3rem; /* Reduced bottom margin for labels */
+  margin-bottom: 0.3rem;
 }
 
 .create-customer-container form input {
-  padding: 0.4rem; /* Reduced padding for input fields */
+  padding: 0.4rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
