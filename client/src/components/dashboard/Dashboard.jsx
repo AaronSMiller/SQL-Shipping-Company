@@ -10,8 +10,10 @@ export default function Dashboard() {
   useEffect(() => {
     // Fetch total number of shipments
     axios.get('/api/shipments/total')
-      .then(response => setTotalShipments(Number(response.data)))
-      .catch(error => console.error('Failed to fetch total shipments', error));
+    .then(response => {
+      console.log("Frontend Response Data:", response.data);
+      setTotalShipments(response.data.totalShipments);
+    })
 
     // Fetch total revenue
     axios.get('/api/revenue/total')

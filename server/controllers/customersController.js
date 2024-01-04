@@ -1,22 +1,25 @@
-// customersController.js
+const customerModel = require('../models/customerModels')
 const db = require('../../db/database');
 
+//good
 exports.getAllCustomers = async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM customer ORDER BY cust_name');
-    res.json(rows);
+    const customers = await customerModel.getAllCustomers();
+    res.json(customers);
   } catch (error) {
     console.error('Error fetching customers:', error);
     res.status(500).send('Server error');
   }
 };
 
+//good
 exports.getCustomerById = async (req, res) => {
   try {
     const { cust_id } = req.params;
-    const [rows] = await db.query('SELECT * FROM customer WHERE cust_id = ?', [cust_id]);
-    if (rows.length > 0) {
-      res.json(rows[0]);
+    const customer = await customerModel.getCustomerById(cust_id);
+
+    if (customer) {
+      res.json(customer);
     } else {
       res.status(404).send('Customer not found');
     }
@@ -26,18 +29,13 @@ exports.getCustomerById = async (req, res) => {
   }
 };
 
+//good
 exports.getCustomerWithHighestRevenue = async (req, res) => {
   try {
-    const [rows] = await db.query(`
-      SELECT cust_id, cust_name, MAX(annual_revenue) AS highestRevenue
-      FROM customer
-      GROUP BY cust_id
-      ORDER BY highestRevenue DESC
-      LIMIT 1
-    `);
-    // Assuming there is at least one customer, send the first one
-    if (rows.length > 0) {
-      res.json(rows[0]);
+    const customer = await customerModel.getCustomerWithHighestRevenue();
+
+    if (customer) {
+      res.json(customer);
     } else {
       res.status(404).json({ message: 'No customers found' });
     }
@@ -47,19 +45,13 @@ exports.getCustomerWithHighestRevenue = async (req, res) => {
   }
 };
 
+//good
 exports.getCustomerWithMostShipments = async (req, res) => {
   try {
-    const [rows] = await db.query(`
-      SELECT c.cust_id, c.cust_name, COUNT(s.ship_id) AS shipmentCount
-      FROM customer c
-      JOIN shipment s ON c.cust_id = s.cust_id
-      GROUP BY c.cust_id
-      ORDER BY shipmentCount DESC
-      LIMIT 1
-    `);
-    // Assuming there is at least one customer, send the first one
-    if (rows.length > 0) {
-      res.json(rows[0]);
+    const customer = await customerModel.getCustomerWithMostShipments();
+
+    if (customer) {
+      res.json(customer);
     } else {
       res.status(404).json({ message: 'No customers found' });
     }
@@ -69,47 +61,22 @@ exports.getCustomerWithMostShipments = async (req, res) => {
   }
 };
 
+//good
 exports.getCustomerShipmentDetails = async (req, res) => {
   const { customerId } = req.params;
 
   try {
-    // Query to get the total number of shipments and the average weight
-    const shipmentStatsQuery = `
-      SELECT
-        COUNT(ship_id) AS totalShipments,
-        ROUND(AVG(weight), 2) AS averageWeight
-      FROM shipment
-      WHERE cust_id = ?
-    `;
+    const shipmentStats = await customerModel.getCustomerShipmentStats(customerId);
+    const deliveryLocations = await customerModel.getCustomerDeliveryLocations(customerId);
 
-    // Query to get the distinct cities and states
-    const deliveryLocationsQuery = `
-    SELECT
-      DISTINCT city.city_name,
-      city.state
-    FROM shipment
-    INNER JOIN city ON shipment.city_id = city.city_id
-    WHERE shipment.cust_id = ?
-    `;
-
-    // Execute the queries
-    const [shipmentStats] = await db.query(shipmentStatsQuery, [customerId]);
-    const [deliveryLocations] = await db.query(deliveryLocationsQuery, [customerId]);
-
-    // Check if we have the shipment stats, if not, it means there's no shipment data for the customer
-    if (shipmentStats.length === 0) {
+    if (!shipmentStats) {
       return res.status(404).json({ message: 'No shipment data found for this customer.' });
     }
 
-    // Prepare the response data
     const responseData = {
-      totalShipments: shipmentStats[0].totalShipments,
-      averageWeight: shipmentStats[0].averageWeight,
-      deliveryLocations: deliveryLocations.map(loc => {
-        const city = loc.city_name;
-        const state = loc.state;
-        return `${city}, ${state}`;
-      }),
+      totalShipments: shipmentStats.totalShipments,
+      averageWeight: shipmentStats.averageWeight,
+      deliveryLocations: deliveryLocations.map(loc => `${loc.city_name}, ${loc.state}`),
     };
 
     res.json(responseData);
@@ -119,31 +86,13 @@ exports.getCustomerShipmentDetails = async (req, res) => {
   }
 };
 
+//good
 exports.getTrucksForCustomer = async (req, res) => {
   const { customerId } = req.params;
 
   try {
-    // SQL query to get all unique trucks for a specific customer's shipments
-    const query = `
-    SELECT
-      t.truck_id,
-      t.make,
-      t.model_year,
-    COUNT(s.ship_id) AS shipment_count
-    FROM
-      truck AS t
-    INNER JOIN
-      shipment AS s ON t.truck_id = s.truck_id
-    WHERE
-      s.cust_id = ?
-    GROUP BY
-      t.truck_id
-    ORDER BY
-      shipment_count DESC
-    LIMIT 1;
-    `;
+    const trucks = await customerModel.getTrucksForCustomer(customerId);
 
-    const [trucks] = await db.query(query, [customerId]);
     if (trucks.length > 0) {
       res.json(trucks);
     } else {
@@ -155,34 +104,15 @@ exports.getTrucksForCustomer = async (req, res) => {
   }
 };
 
+//good
 exports.getDriversForCustomer = async (req, res) => {
   const { customerId } = req.params;
 
   try {
-    // SQL query to get the driver with the most shipments for the specified customer
-    const query = `
-      SELECT
-        d.driver_id,
-        d.first_name,
-        d.last_name,
-        COUNT(s.ship_id) AS shipment_count
-      FROM
-        driver AS d
-      INNER JOIN
-        shipment AS s ON d.driver_id = s.driver_id
-      WHERE
-        s.cust_id = ?
-      GROUP BY
-        d.driver_id
-      ORDER BY
-        shipment_count DESC
-      LIMIT 1;
-    `;
+    const mostUsedDriver = await customerModel.getMostUsedDriverForCustomer(customerId);
 
-    const [drivers] = await db.query(query, [customerId]);
-
-    if (drivers.length > 0) {
-      res.json(drivers[0]);  // Send back the driver with the most shipments
+    if (mostUsedDriver) {
+      res.json(mostUsedDriver);
     } else {
       res.status(404).json({ message: 'No drivers found for this customer' });
     }
@@ -192,31 +122,25 @@ exports.getDriversForCustomer = async (req, res) => {
   }
 };
 
+//good
 exports.createCustomer = async (req, res) => {
   try {
     const { cust_name, cust_type, address, city, state, zip, phone, annual_revenue } = req.body;
 
     // Check for an existing customer with the same name to prevent duplicates
-    const duplicateNameCheckSql = 'SELECT cust_id FROM customer WHERE cust_name = ? LIMIT 1';
-    const [existingCustomer] = await db.query(duplicateNameCheckSql, [cust_name]);
+    const isDuplicateName = await customerModel.checkDuplicateCustomerName(cust_name);
 
-    if (existingCustomer.length > 0) {
+    if (isDuplicateName) {
       return res.status(409).json({ message: 'A customer with this name already exists.' });
     }
 
     // If no duplicate name, proceed to insert the new customer
-    const insertSql = `
-      INSERT INTO customer (cust_name, cust_type, address, city, state, zip, phone, annual_revenue)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-    `;
-
-    const results = await db.query(insertSql, [cust_name, cust_type, address, city, state, zip, phone, annual_revenue || 0]);
+    const cust_id = await customerModel.createCustomer(req.body);
 
     // Send back the ID of the newly created customer
-    res.status(201).json({ cust_id: results.insertId });
+    res.status(201).json({ cust_id });
   } catch (error) {
-    // Handle errors
-    console.error(error);
+    console.error('Error creating new customer:', error);
     res.status(500).json({ message: 'Error creating new customer' });
   }
 };
@@ -225,17 +149,17 @@ exports.deleteCustomer = async (req, res) => {
   const { cust_id } = req.params;
 
   try {
-    const [result] = await db.query('DELETE FROM customer WHERE cust_id = ?', [cust_id]);
+    const affectedRows = await customerModel.deleteCustomer(cust_id);
 
-    if (result.affectedRows === 0) {
+    if (affectedRows === 0) {
       console.log('No customer found with cust_id:', cust_id);
       return res.status(404).json({ message: 'Customer not found.' });
     }
 
-    return res.status(200).json({ message: 'Customer deleted successfully.' });
+    res.status(200).json({ message: 'Customer deleted successfully.' });
   } catch (error) {
     console.error('Error in delete operation:', error);
-    return res.status(500).json({ message: 'Failed to delete customer.', error: error.message });
+    res.status(500).json({ message: 'Failed to delete customer.', error: error.message });
   }
 };
 
