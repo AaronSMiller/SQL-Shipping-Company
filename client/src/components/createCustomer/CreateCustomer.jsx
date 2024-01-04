@@ -32,11 +32,8 @@ export default function CreateCustomer() {
     }
 
     try {
-      // Assuming the API endpoint to create a customer is '/api/customers'
       const response = await axios.post('/api/customers', formData);
-      console.log(response.data);
       alert('Customer created successfully!');
-      // Reset form or handle success (e.g., redirect to customers list)
     } catch (error) {
       console.error('Failed to create customer:', error);
       alert('Failed to create customer. Please try again.');

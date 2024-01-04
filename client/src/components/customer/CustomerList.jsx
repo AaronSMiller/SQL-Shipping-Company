@@ -7,7 +7,6 @@ const CustomersList = () => {
 
   useEffect(() => {
     axios.get(`/api/customers/`)
-    // customerHelpers.getAllCustomers()
     .then(response => {
       setCustomers(response.data);
     }).catch(error => {

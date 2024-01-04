@@ -7,8 +7,6 @@ const revenueController = require('../controllers/revenueController')
 
 
 //Customer Specific Routes//
-
-//Get
 router.get('/customers', customersController.getAllCustomers);
 router.post('/customers', customersController.createCustomer);
 router.get('/customers/getHighestRevenue', customersController.getCustomerWithHighestRevenue);

@@ -8,7 +8,6 @@ const CustomerCard = ({ customer }) => {
 
   const [shipments, setShipments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   const handleOpenDetails = () => {
@@ -23,14 +22,12 @@ const CustomerCard = ({ customer }) => {
     }).format(revenue);
   };
 
-
-
   const handleDeleteCustomer = () => {
     const confirmDelete = window.confirm(`Are you sure you want to delete ${customer.cust_name}?`);
     if (confirmDelete) {
       axios.delete(`/api/customers/${customer.cust_id}`)
         .then(response => {
-          // Check for a successful response status code (e.g., 200 OK)
+          // Check for a successful response
           if (response.status === 200) {
             alert(response.data.message); // Show the success message from the server
           } else {
