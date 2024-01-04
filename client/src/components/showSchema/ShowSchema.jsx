@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 export default function ShowSchema() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const imageUrl = 'https://i.imgur.com/iB1WVWY.png'; // URL of the image
+  const imageUrl = 'https://i.imgur.com/iB1WVWY.png';
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);

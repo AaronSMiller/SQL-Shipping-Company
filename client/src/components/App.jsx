@@ -9,7 +9,6 @@ const App = () => {
     <div>
       <h1>SQL Shipping Company</h1>
       <ShowSchema />
-      <h2>KPIs</h2>
       <Dashboard />
       <CreateCustomer />
       <CustomersList />
