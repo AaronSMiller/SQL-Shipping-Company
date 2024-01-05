@@ -4,7 +4,7 @@ import Modal from '../modal/Modal';
 import CustomerDetails from './CustomerDetails';
 import axios from 'axios'
 
-const CustomerCard = ({ customer }) => {
+const CustomerCard = ({ customer, fetchCustomers }) => {
 
   const [shipments, setShipments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +30,7 @@ const CustomerCard = ({ customer }) => {
           // Check for a successful response
           if (response.status === 200) {
             alert(response.data.message); // Show the success message from the server
+            fetchCustomers(); // Refresh the customer list
           } else {
             // If the status code is not successful, log the response for debugging
             console.error('Unexpected response status:', response);
