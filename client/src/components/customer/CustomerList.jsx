@@ -2,24 +2,14 @@ import React, { useEffect, useState } from 'react';
 import CustomerCard from './CustomerCard'
 import axios from 'axios'
 
-const CustomersList = () => {
-  const [customers, setCustomers] = useState([]);
-
-  useEffect(() => {
-    axios.get(`/api/customers/`)
-    .then(response => {
-      setCustomers(response.data);
-    }).catch(error => {
-      console.error('There was an error!', error);
-    });
-  }, []);
+const CustomersList = ({ customers, fetchCustomers }) => {
 
   return (
     <div>
       <h2>Customer List</h2>
       <div className="customer-list">
         {customers.map(customer => (
-          <CustomerCard key={customer.cust_id} customer={customer} />
+          <CustomerCard key={customer.cust_id} customer={customer} fetchCustomers={fetchCustomers} />
         ))}
       </div>
     </div>

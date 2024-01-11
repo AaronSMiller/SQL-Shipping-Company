@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-export default function CreateCustomer() {
+export default function CreateCustomer( {fetchCustomers} ) {
   const [formData, setFormData] = useState({
     cust_name: '',
     cust_type: '',
@@ -10,7 +10,7 @@ export default function CreateCustomer() {
     state: '',
     zip: '',
     phone: '',
-    annual_revenue: '', // Optional field
+    annual_revenue: '',
   });
 
   const handleChange = (e) => {
@@ -23,7 +23,6 @@ export default function CreateCustomer() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Check for mandatory fields, except annual_revenue
     for (const [key, value] of Object.entries(formData)) {
       if (!value && key !== 'annual_revenue') {
         alert(`Please fill in the ${key} field.`);
@@ -33,12 +32,29 @@ export default function CreateCustomer() {
 
     try {
       const response = await axios.post('/api/customers', formData);
-      alert('Customer created successfully!');
+      if (response.status === 201) {
+        alert('Customer created successfully!');
+        fetchCustomers(); // Refresh the customer list
+        setFormData({ // Reset form data
+          cust_name: '',
+          cust_type: '',
+          address: '',
+          city: '',
+          state: '',
+          zip: '',
+          phone: '',
+          annual_revenue: '',
+        });
+      } else {
+        console.log('Response received:', response);
+        alert('Customer creation was not successful. Please check the console for more information.');
+      }
     } catch (error) {
       console.error('Failed to create customer:', error);
       alert('Failed to create customer. Please try again.');
     }
   };
+
 
   return (
     <div className="container create-customer-container">
